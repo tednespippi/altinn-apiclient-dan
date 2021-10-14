@@ -1,22 +1,13 @@
+using Altinn.ApiClients.Dan.Extensions;
+using Altinn.ApiClients.Dan.Interfaces;
+using Altinn.ApiClients.Dan.Models;
+using Altinn.ApiClients.Maskinporten.Config;
+using Altinn.ApiClients.Maskinporten.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Altinn.ApiClients.Dan.Extensions;
-using Altinn.ApiClients.Maskinporten.Config;
-using Altinn.ApiClients.Maskinporten.Handlers;
-using Altinn.ApiClients.Maskinporten.Service;
-using Altinn.ApiClients.Maskinporten.Services;
-using Microsoft.Extensions.Caching.Memory;
-using SampleWebApp.Service;
 using SampleWebApp.Services;
 
 namespace SampleWebApp
@@ -30,19 +21,27 @@ namespace SampleWebApp
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Configuration for DAN (environment and subscription key)
+            services.Configure<DanSettings>(Configuration.GetSection("DanSettings"));
+
+
+            // Config for MaskinPorten, using a local PKCS#12 file containing private certificate for signing Maskinporten requests
+            services.Configure<MaskinportenSettings<Pkcs12ClientDefinition>>(Configuration.GetSection("MyMaskinportenSettingsForCertFile"));
+            // This registers an IDanClient for injection, see Controllers/DanClientTestController.cs for usage example
+            services.AddDanClient<Pkcs12ClientDefinition>();
+
+            // If the secret required for Maskinporten is found elsewhere, you can either use one of the built-in client definitions, or provide your
+            // own, like this
+            //services.Configure<MaskinportenSettings<MyCustomDanClientDefinition>>(Configuration.GetSection("MyMaskinportenSettingsForCertFile"));
+            //services.Configure<DanSettings>(Configuration.GetSection("DanSettings"));
+            //services.AddDanClient<MyCustomDanClientDefinition>();
+
+            // If you want to get the token from some other place, you can implementent your own IAccessTokenRetriever, and use this instead of Maskinporten. 
+            //services.AddDanClientWithAccessTokenRetriever<MyAccessTokenRetriever>();
+
             services.AddControllers();
-
-            services.AddSingleton<IMemoryCache, MemoryCache>();
-            services.AddHttpClient();
-
-            // Add a configuration client
-            services.Configure<MaskinportenSettings<IMyDanClientSecretService>>(Configuration.GetSection("MaskinportenSettingsForDanClient"));
-            services.AddDanClient<IMyDanClientSecretService, MyDanClientSecretService>();
-
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -58,10 +57,7 @@ namespace SampleWebApp
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
