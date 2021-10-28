@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Nadobe.Common.Models;
 
 namespace Altinn.ApiClients.Dan.Models
 {
@@ -18,34 +17,34 @@ namespace Altinn.ApiClients.Dan.Models
         public string AccreditationId { get; set; }
 
         /// <summary>
-        /// Gets or sets the party requesting the evidence
+        /// Gets or sets the party requesting the dataset
         /// </summary>
         [JsonPropertyName("requestor")]
         public string Requestor { get; set; }
 
         /// <summary>
-        /// Gets or sets the party the evidence is requested for
+        /// Gets or sets the party the dataset is requested for
         /// </summary>
         [Required]
         [JsonPropertyName("subject")]
         public string Subject { get; set; }
 
         /// <summary>
-        /// Gets or sets the aggregate status for all evidence codes in the accreditation, excluding asynchronous evidence codes.
+        /// Gets or sets the aggregate status for all datasets in the accreditation, excluding asynchronous datasets.
         /// </summary>
         [Required]
         [JsonPropertyName("aggregateStatus")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public DataSetStatusCode AggregateStatus { get; set; }
+        public DataSetRequestStatusCode AggregateStatus { get; set; }
 
         [JsonPropertyName("isDirectHarvest")] public bool IsDirectHarvest { get; set; }
 
         /// <summary>
-        /// Gets or sets a list of evidence codes associated with the accreditation. Only supplied when requesting a single accreditation.
+        /// Gets or sets a list of datasets associated with the accreditation. Only supplied when requesting a single accreditation.
         /// </summary>
         [JsonPropertyName("evidenceCodes")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public List<DataSetCode> DataSetCodes { get; set; }
+        public List<DataSetDefinition> DataSetDefinitions { get; set; }
 
         /// <summary>
         /// Gets or sets when the accreditation was created
@@ -84,7 +83,7 @@ namespace Altinn.ApiClients.Dan.Models
         public string ExternalReference { get; set; }
 
         /// <summary>
-        /// Gets or sets a list of evidenceCodes that have been verified
+        /// Gets or sets a list of datasets that have been verified
         /// </summary>
         [JsonPropertyName("evidenceCodesWithVerifiedLegalBasis")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -98,6 +97,12 @@ namespace Altinn.ApiClients.Dan.Models
         {
             return DataSetWithVerifiedLegalBasis?.Count > 0;
         }
+
+        /// <summary>
+        /// Gets or sets the owner (organization number) for this accreditation.
+        /// </summary>
+        [JsonPropertyName("Owner")]
+        public string Owner { get; set; }
 
         /// <summary>
         /// The selected language for the accreditation, used for consent request texts and notifications, no-nb, no-nn or en

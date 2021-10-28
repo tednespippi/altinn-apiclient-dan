@@ -19,7 +19,6 @@ namespace Altinn.ApiClients.Dan.Extensions
         public static void AddDanClient<T>(this IServiceCollection services) where T : class, IClientDefinition
         {
             services.TryAddSingleton<IMemoryCache, MemoryCache>();
-            services.AddHttpClient();
             services.TryAddSingleton<T>();
             services.TryAddSingleton<IDanClient, DanClient>();
             services.TryAddSingleton<IMaskinportenService, MaskinportenService>();
@@ -29,6 +28,7 @@ namespace Altinn.ApiClients.Dan.Extensions
             services.AddRefitClient<IDanApi>(sp =>
                 {
                     danSettings = sp.GetRequiredService<IOptions<DanSettings>>().Value;
+
                     return new RefitSettings();
                 })
                 .ConfigureHttpClient(c =>
@@ -42,7 +42,6 @@ namespace Altinn.ApiClients.Dan.Extensions
         public static void AddDanClientWithAccessTokenRetriever<T>(this IServiceCollection services) where T : class, IAccessTokenRetriever
         {
             services.TryAddSingleton<IMemoryCache, MemoryCache>();
-            services.AddHttpClient();
             services.TryAddSingleton<IDanClient, DanClient>();
             services.TryAddSingleton<IAccessTokenRetriever, T>();
             services.TryAddTransient<AccessTokenRetrieverHandler>();
@@ -51,6 +50,7 @@ namespace Altinn.ApiClients.Dan.Extensions
             services.AddRefitClient<IDanApi>(sp =>
                 {
                     danSettings = sp.GetRequiredService<IOptions<DanSettings>>().Value;
+
                     return new RefitSettings();
                 })
                 .ConfigureHttpClient(c =>
