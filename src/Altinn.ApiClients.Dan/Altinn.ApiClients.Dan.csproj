@@ -9,14 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Altinn.ApiClients.Maskinporten" Version="1.0.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
       <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
       <PackageReference Include="Refit" Version="6.0.94" />
       <PackageReference Include="Refit.HttpClientFactory" Version="6.0.94" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\altinn-apiclient-maskinporten\src\Altinn.ApiClients.Maskinporten\Altinn.ApiClients.Maskinporten.csproj" />
     </ItemGroup>
 
     <ItemGroup>

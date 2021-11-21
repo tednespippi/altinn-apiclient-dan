@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Altinn.ApiClients.Dan.Interfaces;
 using Altinn.ApiClients.Dan.Models;
+using Refit;
 
 namespace Altinn.ApiClients.Dan.Services
 {
@@ -18,7 +21,14 @@ namespace Altinn.ApiClients.Dan.Services
         public async Task<DataSet> GetSynchronousDataset(string dataSetName, string subject,
             string requestor = null, Dictionary<string, string> parameters = null)
         {
-            return await _danApi.GetDirectharvest(dataSetName, subject, requestor, parameters);
+            try
+            {
+                return  await _danApi.GetDirectharvest(dataSetName, subject, requestor, parameters);
+            }
+            catch (ApiException ex)
+            {
+                throw DanException.FromApiException(ex); 
+            }
         }
 
         public async Task<Accreditation> CreateAsynchronousDatasetRequest(DataSetRequest dataSetRequest, string subject,
@@ -30,23 +40,51 @@ namespace Altinn.ApiClients.Dan.Services
                 Subject = subject,
                 Requestor = requestor
             };
-            return await _danApi.PostAuthorization(authorizationRequest);
-        }
 
+            try
+            {
+                return await _danApi.PostAuthorization(authorizationRequest);
+            }
+            catch (ApiException ex)
+            {
+                throw DanException.FromApiException(ex);
+            }
+        }
         public async Task<DataSet> GetAsynchronousDataset(string accreditationguid, string datasetname)
         {
-            return await _danApi.GetEvidence(accreditationguid, datasetname);
+            try
+            {
+                return await _danApi.GetEvidence(accreditationguid, datasetname);
+            }
+            catch (ApiException ex)
+            {
+                throw DanException.FromApiException(ex);
+            }
         }
 
         public async Task<List<DataSetRequestStatus>> GetRequestStatus(string accreditationGuid, string dataSetName)
         {
-            var dataSetRequestStatuses = await _danApi.GetEvidenceStatus(accreditationGuid);
-            return dataSetRequestStatuses.Where(status => status.DataSetName.Equals(dataSetName)).ToList();
+            try
+            {
+                var dataSetRequestStatuses = await _danApi.GetEvidenceStatus(accreditationGuid);
+                return dataSetRequestStatuses.Where(status => status.DataSetName.Equals(dataSetName)).ToList();
+            }
+            catch (ApiException ex)
+            {
+                throw DanException.FromApiException(ex);
+            }
         }
 
         public async Task<List<DataSetRequestStatus>> GetRequestStatus(string accreditationGuid)
         {
-            return await _danApi.GetEvidenceStatus(accreditationGuid);
+            try
+            {
+                return await _danApi.GetEvidenceStatus(accreditationGuid);
+            }
+            catch (ApiException ex)
+            {
+                throw DanException.FromApiException(ex);
+            }
         }
     }
 }

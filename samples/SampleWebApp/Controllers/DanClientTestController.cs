@@ -13,11 +13,9 @@ namespace SampleWebApp.Controllers
     [Route("[controller]/[action]")]
     public class DanClientTestController : ControllerBase
     {
-        private readonly ILogger<DanClientTestController> _logger;
         private readonly IDanClient _danClient;
-        public DanClientTestController(ILogger<DanClientTestController> logger, IDanClient danClient)
+        public DanClientTestController(IDanClient danClient)
         {
-            _logger = logger;
             _danClient = danClient;
         }
 
@@ -25,7 +23,6 @@ namespace SampleWebApp.Controllers
         [ActionName("direct")]
         public async Task<ActionResult> Direct(string datasetname, string requestor, string subject, [FromQuery] Dictionary<string, string> parameters)
         {
-            _logger.LogInformation($"GetSynchronousDataset() | datasetname: {datasetname}, subject: {subject}, requestor: {requestor}, parameters: {parameters.ToReadable()}");
             DataSet dataset = await _danClient.GetSynchronousDataset(datasetname, subject, requestor, parameters);
             return Content(dataset.ToHtmlTable(), "text/html; charset=utf-8");
         }
@@ -34,11 +31,8 @@ namespace SampleWebApp.Controllers
         [ActionName("auth")]
         public async Task<ActionResult> Auth(string datasetname, [FromQuery] Dictionary<string, string> parameters)
         {
-            _logger.LogInformation($"CreateAsynchronousDatasetRequest().. | datasetname: {datasetname}, parameters: {parameters.ToReadable()}");
             var dataSetRequest = GetDataSetRequest(datasetname, parameters);
             Accreditation accreditation = await _danClient.CreateAsynchronousDatasetRequest(dataSetRequest, "982211743", "991825827");
-
-            _logger.LogInformation($"AccreditationId: {accreditation.AccreditationId}");
 
             return Content(accreditation.ToHtmlTable(), "text/html; charset=utf-8");
         }
@@ -47,7 +41,6 @@ namespace SampleWebApp.Controllers
         [ActionName("async")]
         public async Task<ActionResult> Async(string accreditationId, string datasetname)
         {
-            _logger.LogInformation($"GetAsynchronousDataset() | input: accreditationId: {accreditationId}, datasetname: {datasetname}");
             DataSet dataset = await _danClient.GetAsynchronousDataset(accreditationId, datasetname);
             return Content(dataset.ToHtmlTable(), "text/html; charset=utf-8");
         }
@@ -56,7 +49,6 @@ namespace SampleWebApp.Controllers
         [ActionName("status")]
         public async Task<ActionResult> Status(string accreditationId, string datasetname)
         {
-            _logger.LogInformation($"GetRequestStatus() | input: accreditationId: {accreditationId}, datasetname: {datasetname}");
             List<DataSetRequestStatus> dataSetRequestStatus;
             if (string.IsNullOrEmpty(datasetname))
             {
@@ -87,11 +79,6 @@ namespace SampleWebApp.Controllers
     
     internal static class Extensions
     {
-        public static string ToReadable<T, V>(this Dictionary<T, V> d)
-        {
-            return d == null ? "" : string.Join(" | ", d.Select(a => $"{a.Key}: {a.Value}"));
-        }
-
         public static string ToHtmlTable(this DataSet ds)
         {
             var sb = new StringBuilder();
