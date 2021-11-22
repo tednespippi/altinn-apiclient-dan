@@ -1,12 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-        <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-        <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-        <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Altinn.ApiClients.Dan</PackageId>
+    <Company>Digitaliseringsdirektoratet</Company>
+    <PackageTags>digdir;altinn;dan;data.altinn.no</PackageTags>
+    <Description>
+      This library is used for retrieving datasets via data.altinn.no, utilziing Maskinporten for authentication
+    </Description>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Altinn/altinn-apiclient-dan</RepositoryUrl>
+  </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Altinn.ApiClients.Maskinporten" Version="1.0.0" />
