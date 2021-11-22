@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script>
+        var setup = function() {
+            document.getElementById('get1').addEventListener('click',
+                function() {
+                    window.location = "/danclienttest/get/UnitBasicInformation/" + document.getElementById('subject1').value;
+                });
+
+            document.getElementById('get2').addEventListener('click',
+                function () {
+                    window.location = "/danclienttest/auth/UnitBasicInformation/" + document.getElementById('subject2').value;
+                });
+
+
+            document.getElementById('get3').addEventListener('click',
+                function () {
+                    window.location = "/danclienttest/status/" + document.getElementById('acn1').value + "/UnitBasicInformation";
+                });
+
+            document.getElementById('get4').addEventListener('click',
+                function () {
+                    window.location = "/danclienttest/getbyaid/" + document.getElementById('acn2').value + "/UnitBasicInformation";
+                });
+        };
+
+        window.onload = setup;
+
+    </script>
+</head>
+<body>
+    <h3>1. Get basic unit information (direct harvest)</h3>
+    <label>Organization number</label>
+    <input type="text" id="subject1" value="991825827">
+    <button id="get1">Get</button>
+
+    <h3>2a. Get basic unit information (authrequest)</h3>
+    <label>Organization number</label>
+    <input type="text" id="subject2" value="991825827">
+    <button id="get2">Get accreditation </button> (copy AccreditationId from the next page)
+
+    <h3>2b. Get accreditation status</h3>
+    <label>Accreditation-ID</label>
+    <input type="text" id="acn1" value="">
+    <button id="get3">Get status for accreditation</button>
+
+    <h3>2c. Harvest</h3>
+    <label>Accreditation-ID</label>
+    <input type="text" id="acn2" value="">
+    <button id="get4">Harvest data for accreditation</button>
+
+
+
+</body>
+</html>
