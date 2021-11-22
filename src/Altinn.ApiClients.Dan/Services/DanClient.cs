@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.ApiClients.Dan.Interfaces;
 using Altinn.ApiClients.Dan.Models;
+using Altinn.ApiClients.Dan.Models.Enums;
 using Refit;
 
 namespace Altinn.ApiClients.Dan.Services
@@ -18,12 +18,12 @@ namespace Altinn.ApiClients.Dan.Services
             _danApi = danApi;
         }
 
-        public async Task<DataSet> GetSynchronousDataset(string dataSetName, string subject,
+        public async Task<DataSet> GetDataSet(string dataSetName, string subject,
             string requestor = null, Dictionary<string, string> parameters = null)
         {
             try
             {
-                return  await _danApi.GetDirectharvest(dataSetName, subject, requestor, parameters);
+                return await _danApi.GetDirectharvest(dataSetName, subject, requestor, parameters);
             }
             catch (ApiException ex)
             {
@@ -31,10 +31,24 @@ namespace Altinn.ApiClients.Dan.Services
             }
         }
 
-        public async Task<Accreditation> CreateAsynchronousDatasetRequest(DataSetRequest dataSetRequest, string subject,
+        public async Task<T> GetDataSet<T>(string dataSetName, string subject,
+            string requestor = null, Dictionary<string, string> parameters = null, string deserializeField = null) where T : new()
+        {
+            try
+            {
+                var result = await GetDataSet(dataSetName, subject, requestor, parameters);
+                return GetDataSetResultAsTyped<T>(result, deserializeField);
+            }
+            catch (ApiException ex)
+            {
+                throw DanException.FromApiException(ex);
+            }
+        }
+
+        public async Task<Accreditation> CreateDataSetRequest(DataSetRequest dataSetRequest, string subject,
             string requestor = null)
         {
-            AuthorizationRequest authorizationRequest = new AuthorizationRequest()
+            var authorizationRequest = new AuthorizationRequest()
             {
                 DataSetRequests = new List<DataSetRequest>() { dataSetRequest },
                 Subject = subject,
@@ -50,11 +64,24 @@ namespace Altinn.ApiClients.Dan.Services
                 throw DanException.FromApiException(ex);
             }
         }
-        public async Task<DataSet> GetAsynchronousDataset(string accreditationguid, string datasetname)
+        public async Task<DataSet> GetDataSetFromAccreditation(string accreditationguid, string datasetname)
         {
             try
             {
                 return await _danApi.GetEvidence(accreditationguid, datasetname);
+            }
+            catch (ApiException ex)
+            {
+                throw DanException.FromApiException(ex);
+            }
+        }
+
+        public async Task<T> GetDataSetFromAccreditation<T>(string accreditationguid, string datasetname, string deserializeField = null) where T : new()
+        {
+            try
+            {
+                var result = await GetDataSetFromAccreditation(accreditationguid, datasetname);
+                return GetDataSetResultAsTyped<T>(result, deserializeField);
             }
             catch (ApiException ex)
             {
@@ -84,6 +111,48 @@ namespace Altinn.ApiClients.Dan.Services
             catch (ApiException ex)
             {
                 throw DanException.FromApiException(ex);
+            }
+        }
+
+        private T GetDataSetResultAsTyped<T>(DataSet result, string deserializeField)
+        {
+            try
+            {
+                // If deserializeField is supplied, attempt to deserialize that and ignore everything else
+                if (deserializeField != null)
+                {
+                    var deserializeDataSetValue =
+                        result.Values.FirstOrDefault(x => x.DataSetValueName == deserializeField);
+                    if (deserializeDataSetValue == null)
+                    {
+                        throw new DanException(
+                            $"Target field for deserialization '{deserializeField}' was not present in the dataset");
+                    }
+
+                    return deserializeDataSetValue.Value == null
+                        ? default
+                        : JsonSerializer.Deserialize<T>(deserializeDataSetValue.Value.ToString()!);
+                }
+
+                // If deserializeField is not supplied, and the first field in the return is of type "JsonSchema", attempt to deserialize that and ignore everything else
+                var firstDataSetValue = result.Values.First();
+                if (firstDataSetValue.ValueType == DataSetValueType.JsonSchema)
+                {
+                    return firstDataSetValue.Value == null
+                        ? default
+                        : JsonSerializer.Deserialize<T>(firstDataSetValue.Value.ToString()!);
+                }
+
+                // TODO!
+                // Attempt to manually map the dataset to the supplied type via reflection. This will require mapping of
+                // all DateSetValueTypes to appropiate .NET types.
+
+                throw new DanException(
+                    $"Mapping to model '{typeof(T).Name}' requires the dataset to have a field of type 'JsonSchema', which is either the first field or specified via the 'deserializeField' parameter");
+            }
+            catch (JsonException ex)
+            {
+                throw new DanException("Unable to deserialize to requested type: " + ex.Message, ex);
             }
         }
     }

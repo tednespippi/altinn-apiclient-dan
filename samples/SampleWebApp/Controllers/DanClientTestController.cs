@@ -19,30 +19,28 @@ namespace SampleWebApp.Controllers
             _danClient = danClient;
         }
 
-        [HttpGet("{datasetname}/{requestor}/{subject}")]
-        [ActionName("direct")]
-        public async Task<ActionResult> Direct(string datasetname, string requestor, string subject, [FromQuery] Dictionary<string, string> parameters)
+        [ActionName("index")]
+        public async Task<ActionResult> Index()
         {
-            DataSet dataset = await _danClient.GetSynchronousDataset(datasetname, subject, requestor, parameters);
+            return Content(await System.IO.File.ReadAllTextAsync("Views/index.html"), "text/html; charset=utf-8");
+        }
+
+        [HttpGet("{datasetname}/{subject}")]
+        [ActionName("get")]
+        public async Task<ActionResult> Get(string datasetname, string subject, [FromQuery] Dictionary<string, string> parameters)
+        {
+            DataSet dataset = await _danClient.GetDataSet(datasetname, subject, null, parameters);
             return Content(dataset.ToHtmlTable(), "text/html; charset=utf-8");
         }
 
-        [HttpGet("{datasetname}")]
+        [HttpGet("{datasetname}/{subject}")]
         [ActionName("auth")]
-        public async Task<ActionResult> Auth(string datasetname, [FromQuery] Dictionary<string, string> parameters)
+        public async Task<ActionResult> Auth(string datasetname, string subject, [FromQuery] Dictionary<string, string> parameters)
         {
             var dataSetRequest = GetDataSetRequest(datasetname, parameters);
-            Accreditation accreditation = await _danClient.CreateAsynchronousDatasetRequest(dataSetRequest, "982211743", "991825827");
+            Accreditation accreditation = await _danClient.CreateDataSetRequest(dataSetRequest, subject, "991825827");
 
             return Content(accreditation.ToHtmlTable(), "text/html; charset=utf-8");
-        }
-
-        [HttpGet("{accreditationId}/{datasetname}")]
-        [ActionName("async")]
-        public async Task<ActionResult> Async(string accreditationId, string datasetname)
-        {
-            DataSet dataset = await _danClient.GetAsynchronousDataset(accreditationId, datasetname);
-            return Content(dataset.ToHtmlTable(), "text/html; charset=utf-8");
         }
         
         [HttpGet("{accreditationId}/{datasetname?}")]
@@ -61,7 +59,16 @@ namespace SampleWebApp.Controllers
 
             return Content(dataSetRequestStatus.ToHtmlTable(), "text/html; charset=utf-8");
         }
-        
+
+
+        [HttpGet("{accreditationId}/{datasetname}")]
+        [ActionName("getbyaid")]
+        public async Task<ActionResult> GetByAid(string accreditationId, string datasetname)
+        {
+            DataSet dataset = await _danClient.GetDataSetFromAccreditation(accreditationId, datasetname);
+            return Content(dataset.ToHtmlTable(), "text/html; charset=utf-8");
+        }
+
         private static DataSetRequest GetDataSetRequest(string datasetname, Dictionary<string, string> parameters)
         {
             DataSetRequest dataSetRequest = new DataSetRequest()

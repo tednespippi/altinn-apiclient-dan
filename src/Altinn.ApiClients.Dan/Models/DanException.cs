@@ -12,6 +12,7 @@ namespace Altinn.ApiClients.Dan.Models
     public class DanException : Exception
     { 
         public DanException(string message) : base(message) {}
+        public DanException(string message, Exception innerException) : base(message, innerException) {}
 
         public Error Error { get; set; }
 

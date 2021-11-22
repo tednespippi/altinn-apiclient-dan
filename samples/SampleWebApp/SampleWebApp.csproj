@@ -19,5 +19,11 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Views\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 
 </Project>
