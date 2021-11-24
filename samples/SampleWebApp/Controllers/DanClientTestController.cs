@@ -92,7 +92,7 @@ namespace SampleWebApp.Controllers
             sb.AppendLine("<table>");
             foreach (var dsv in ds.Values)
             {
-                sb.AppendLine($"<tr><th>{dsv.DataSetValueName}:</th><td>{dsv.Value}</td></tr>");
+                sb.AppendLine($"<tr><th>{dsv.Name}:</th><td>{dsv.Value}</td></tr>");
             }
             sb.AppendLine("</table>");
 
