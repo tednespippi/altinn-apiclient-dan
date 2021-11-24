@@ -22,7 +22,7 @@ namespace Altinn.ApiClients.Dan.Models
         /// </summary>
         [Required]
         [JsonPropertyName("evidenceValueName")]
-        public string DataSetValueName { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// The source from which the dataset is harvested
