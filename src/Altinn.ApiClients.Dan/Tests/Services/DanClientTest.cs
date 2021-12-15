@@ -35,13 +35,13 @@ namespace Tests.Services
                     {
                         new()
                         {
-                            DataSetValueName = "SomeString",
+                            Name = "SomeString",
                             Value = "Bar",
                             ValueType = DataSetValueType.String
                         },
                         new()
                         {
-                            DataSetValueName = "SomeJson",
+                            Name = "SomeJson",
                             Value = "{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2021-12-12T04:56:12\"}",
                             ValueType = DataSetValueType.JsonSchema
                         }
@@ -80,13 +80,13 @@ namespace Tests.Services
                     {
                         new()
                         {
-                            DataSetValueName = "SomeString",
+                            Name = "SomeString",
                             Value = "Bar",
                             ValueType = DataSetValueType.String
                         },
                         new()
                         {
-                            DataSetValueName = "SomeJson",
+                            Name = "SomeJson",
                             Value = "{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2021-12-12T04:56:12\"}",
                             ValueType = DataSetValueType.JsonSchema
                         }
@@ -119,13 +119,13 @@ namespace Tests.Services
                     {
                         new()
                         {
-                            DataSetValueName = "SomeJson",
+                            Name = "SomeJson",
                             Value = "{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2021-12-12T04:56:12\"}",
                             ValueType = DataSetValueType.JsonSchema
                         },
                         new()
                         {
-                            DataSetValueName = "SomeString",
+                            Name = "SomeString",
                             Value = "Bar",
                             ValueType = DataSetValueType.String
                         }
@@ -163,7 +163,7 @@ namespace Tests.Services
                     {
                         new()
                         {
-                            DataSetValueName = "SomeString",
+                            Name = "SomeString",
                             Value = "Bar",
                             ValueType = DataSetValueType.String
                         }
@@ -185,19 +185,19 @@ namespace Tests.Services
                 {
                     new()
                     {
-                        DataSetValueName = "SomeString",
+                        Name = "SomeString",
                         Value = "Bar",
                         ValueType = DataSetValueType.String
                     },
                     new()
                     {
-                        DataSetValueName = "SomeNumber",
+                        Name = "SomeNumber",
                         Value = "123",
                         ValueType = DataSetValueType.String
                     },
                     new()
                     {
-                        DataSetValueName = "SomeDateTime",
+                        Name = "SomeDateTime",
                         Value = "2021-12-12T04:56:12",
                         ValueType = DataSetValueType.String
                     },

@@ -122,7 +122,7 @@ namespace Altinn.ApiClients.Dan.Services
                 if (deserializeField != null)
                 {
                     var deserializeDataSetValue =
-                        result.Values.FirstOrDefault(x => x.DataSetValueName == deserializeField);
+                        result.Values.FirstOrDefault(x => x.Name == deserializeField);
                     if (deserializeDataSetValue == null)
                     {
                         throw new DanException(
