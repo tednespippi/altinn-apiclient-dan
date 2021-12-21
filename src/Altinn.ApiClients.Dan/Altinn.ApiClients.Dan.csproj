@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -9,7 +9,7 @@
     <Company>Digitaliseringsdirektoratet</Company>
     <PackageTags>digdir;altinn;dan;data.altinn.no</PackageTags>
     <Description>
-      This library is used for retrieving datasets via data.altinn.no, utilziing Maskinporten for authentication
+      This library is used for retrieving datasets via data.altinn.no, utilizing Maskinporten for authentication
     </Description>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Altinn/altinn-apiclient-dan</RepositoryUrl>
