@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.ApiClients.Dan.Interfaces;
 using Altinn.ApiClients.Dan.Models;
@@ -142,7 +142,7 @@ namespace Altinn.ApiClients.Dan.Services
                 {
                     return firstDataSetValue.Value == null
                         ? default
-                        : JsonSerializer.Deserialize<T>(firstDataSetValue.Value.ToString()!);
+                        : Configuration.Deserializer.Deserialize<T>(firstDataSetValue.Value.ToString()!);
                 }
 
                 // TODO!
@@ -152,7 +152,7 @@ namespace Altinn.ApiClients.Dan.Services
                 throw new DanException(
                     $"Mapping to model '{typeof(T).Name}' requires the dataset to have a field of type 'JsonSchema', which is either the first field or specified via the 'deserializeField' parameter");
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
                 throw new DanException("Unable to deserialize to requested type: " + ex.Message, ex);
             }
