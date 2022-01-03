@@ -20,14 +20,12 @@ namespace Altinn.ApiClients.Dan.Extensions
         {
             services.TryAddSingleton<IMemoryCache, MemoryCache>();
             services.TryAddSingleton<T>();
+            services.TryAddSingleton<IDanConfiguration>(sp => danConfigurationProvider != null
+                ? danConfigurationProvider.Invoke(sp)
+                : new DefaultDanConfiguration());
             services.TryAddSingleton<IDanClient, DanClient>();
             services.TryAddSingleton<IMaskinportenService, MaskinportenService>();
             services.TryAddSingleton<MaskinportenTokenHandler<T>>();
-            if (danConfigurationProvider != null)
-            {
-                services.TryAddSingleton(sp =>
-                    sp.GetRequiredService<IDanClient>().Configuration = danConfigurationProvider.Invoke(sp));
-            }
 
             DanSettings danSettings = null;
             services.AddRefitClient<IDanApi>(sp =>

@@ -13,10 +13,11 @@ namespace Altinn.ApiClients.Dan.Services
     {
         private readonly IDanApi _danApi;
 
-        public IDanConfiguration Configuration { get; set; } = new DefaultDanConfiguration();
+        public IDanConfiguration Configuration { get; set; }
 
-        public DanClient(IDanApi danApi)
+        public DanClient(IDanApi danApi, IDanConfiguration danConfiguration = null)
         {
+            Configuration = danConfiguration ?? new DefaultDanConfiguration();
             _danApi = danApi;
         }
 
