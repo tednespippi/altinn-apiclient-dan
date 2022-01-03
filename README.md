@@ -52,6 +52,21 @@ public void ConfigureServices(IServiceCollection services)
   
     // This registers an IDanClient for injection in your application code
     services.AddDanClient<Pkcs12ClientDefinition>();
+
+    // This does the same, but configures it to use Newtonsoft.Json instead of
+    // the default System.Text.Json deserializer using custom serializer settings
+    /*
+    services.AddDanClient<Pkcs12ClientDefinition>(sp => new DanConfiguration
+    {
+        // Use Newtonsoft.Json instead of System.Text.Json
+        Deserializer = new JsonNetDeserializer {
+            SerializerSettings = new JsonSerializerSettings()
+            {
+                DateFormatString = "yyyy_MM_dd"
+            }
+        }
+    });
+    */
 }
 ```
 

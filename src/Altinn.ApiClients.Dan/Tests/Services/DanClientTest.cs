@@ -9,6 +9,7 @@ using Altinn.ApiClients.Dan.Models;
 using Altinn.ApiClients.Dan.Models.Enums;
 using Altinn.ApiClients.Dan.Services;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Tests.Services
@@ -50,6 +51,63 @@ namespace Tests.Services
                 });
 
             var danClient = new DanClient(danApi.Object);
+
+            // Act
+            MyModel result = await danClient.GetDataSet<MyModel>("a", "a", deserializeField: "SomeJson");
+
+            // Verify
+            Assert.IsNotNull(result);
+            Assert.IsFalse(string.IsNullOrEmpty(result.SomeString));
+            Assert.AreEqual(result.SomeNumber, (decimal)123);
+            Assert.IsNotNull(result.SomeDateTime);
+            Assert.IsFalse(result.SomeDateTime.Equals(DateTime.MinValue));
+
+        }
+
+        [Test]
+        public async Task DeserializeTypedToSuppliedFieldJsonNet_Ok()
+        {
+            // Setup
+            var danApi = new Mock<IDanApi>();
+            danApi
+                .Setup(x => x.GetDirectharvest(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>()))
+                .ReturnsAsync(new DataSet
+                {
+                    Values = new List<DataSetValue>
+                    {
+                        new()
+                        {
+                            Name = "SomeString",
+                            Value = "Bar",
+                            ValueType = DataSetValueType.String
+                        },
+                        new()
+                        {
+                            Name = "SomeJson",
+                            Value = "{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2035_06_12\"}",
+                            ValueType = DataSetValueType.JsonSchema
+                        }
+
+                    }
+                });
+
+            var danClient = new DanClient(danApi.Object)
+            {
+                Configuration = new DanConfiguration
+                {
+                    Deserializer = new JsonNetDeserializer
+                    {
+                        SerializerSettings = new JsonSerializerSettings()
+                        {
+                            DateFormatString = "yyyy_MM_dd"
+                        }
+                    }
+                }
+            };
 
             // Act
             MyModel result = await danClient.GetDataSet<MyModel>("a", "a", deserializeField: "SomeJson");

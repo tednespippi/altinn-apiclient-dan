@@ -28,7 +28,11 @@ namespace SampleWebApp
             // Config for MaskinPorten, using a local PKCS#12 file containing private certificate for signing Maskinporten requests
             services.Configure<MaskinportenSettings<Pkcs12ClientDefinition>>(Configuration.GetSection("MyMaskinportenSettingsForCertFile"));
             // This registers an IDanClient for injection, see Controllers/DanClientTestController.cs for usage example
-            services.AddDanClient<Pkcs12ClientDefinition>();
+            services.AddDanClient<Pkcs12ClientDefinition>(sp => new DanConfiguration
+            {
+                // Use Newtonsoft.Json instead of System.Text.Json
+                Deserializer = new JsonNetDeserializer()
+            });
 
             // If the secret required for Maskinporten is found elsewhere, you can either use one of the built-in client definitions, or provide your
             // own, like this

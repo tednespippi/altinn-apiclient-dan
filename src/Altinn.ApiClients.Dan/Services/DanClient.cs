@@ -13,6 +13,8 @@ namespace Altinn.ApiClients.Dan.Services
     {
         private readonly IDanApi _danApi;
 
+        public IDanConfiguration Configuration { get; set; } = new DefaultDanConfiguration();
+
         public DanClient(IDanApi danApi)
         {
             _danApi = danApi;
@@ -114,7 +116,7 @@ namespace Altinn.ApiClients.Dan.Services
             }
         }
 
-        private T GetDataSetResultAsTyped<T>(DataSet result, string deserializeField)
+        private T GetDataSetResultAsTyped<T>(DataSet result, string deserializeField) where T : new()
         {
             try
             {
@@ -131,7 +133,7 @@ namespace Altinn.ApiClients.Dan.Services
 
                     return deserializeDataSetValue.Value == null
                         ? default
-                        : JsonSerializer.Deserialize<T>(deserializeDataSetValue.Value.ToString()!);
+                        : Configuration.Deserializer.Deserialize<T>(deserializeDataSetValue.Value.ToString()!);
                 }
 
                 // If deserializeField is not supplied, and the first field in the return is of type "JsonSchema", attempt to deserialize that and ignore everything else

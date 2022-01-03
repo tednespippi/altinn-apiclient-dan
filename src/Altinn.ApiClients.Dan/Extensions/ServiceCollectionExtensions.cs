@@ -16,19 +16,23 @@ namespace Altinn.ApiClients.Dan.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddDanClient<T>(this IServiceCollection services) where T : class, IClientDefinition
+        public static void AddDanClient<T>(this IServiceCollection services, Func<IServiceProvider, IDanConfiguration> danConfigurationProvider = null) where T : class, IClientDefinition
         {
             services.TryAddSingleton<IMemoryCache, MemoryCache>();
             services.TryAddSingleton<T>();
             services.TryAddSingleton<IDanClient, DanClient>();
             services.TryAddSingleton<IMaskinportenService, MaskinportenService>();
             services.TryAddSingleton<MaskinportenTokenHandler<T>>();
+            if (danConfigurationProvider != null)
+            {
+                services.TryAddSingleton(sp =>
+                    sp.GetRequiredService<IDanClient>().Configuration = danConfigurationProvider.Invoke(sp));
+            }
 
             DanSettings danSettings = null;
             services.AddRefitClient<IDanApi>(sp =>
                 {
                     danSettings = sp.GetRequiredService<IOptions<DanSettings>>().Value;
-
                     return new RefitSettings();
                 })
                 .ConfigureHttpClient(c =>

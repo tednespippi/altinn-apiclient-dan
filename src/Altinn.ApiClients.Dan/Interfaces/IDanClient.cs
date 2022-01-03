@@ -6,6 +6,8 @@ namespace Altinn.ApiClients.Dan.Interfaces
 {
     public interface IDanClient
     {
+        IDanConfiguration Configuration { get; set; }
+
         Task<DataSet> GetDataSet(string dataSetName, string subject,
             string requestor = null, Dictionary<string, string> parameters = null);
 
