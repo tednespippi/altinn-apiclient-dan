@@ -38,7 +38,7 @@ namespace SampleWebApp.Controllers
         public async Task<ActionResult> Auth(string datasetname, string subject, [FromQuery] Dictionary<string, string> parameters)
         {
             var dataSetRequest = GetDataSetRequest(datasetname, parameters);
-            Accreditation accreditation = await _danClient.CreateDataSetRequest(dataSetRequest, subject, "991825827");
+            Accreditation accreditation = await _danClient.CreateDataSetRequest(dataSetRequest, subject, "991825827", string.IsNullOrEmpty(parameters["redir"]) ? null : parameters["redir"]);
 
             return Content(accreditation.ToHtmlTable(), "text/html; charset=utf-8");
         }
