@@ -121,7 +121,7 @@ namespace Altinn.ApiClients.Dan.Models
         /// <summary>
         /// URL for redirect from funcconsentreceipt if user is in GUI guided process
         /// </summary>
-        [JsonPropertyName("conseptReceiptRedirectUrl")]
+        [JsonPropertyName("consentReceiptRedirectUrl")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string ConsentReceiptRedirectUrl { get; set; }
 
