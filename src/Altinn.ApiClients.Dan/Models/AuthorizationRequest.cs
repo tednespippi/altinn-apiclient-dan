@@ -58,5 +58,9 @@ namespace Altinn.ApiClients.Dan.Models
         [JsonPropertyName("languageCode")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string LanguageCode { get; set; }
+
+        [JsonPropertyName("consentReceiptRedirectUrl")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string ConsentReceiptRedirectUrl { get; set; }
     }
 }

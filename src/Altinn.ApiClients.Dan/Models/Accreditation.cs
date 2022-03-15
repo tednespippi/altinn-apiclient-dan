@@ -110,5 +110,26 @@ namespace Altinn.ApiClients.Dan.Models
         [JsonPropertyName("languageCode")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string LanguageCode { get; set; }
+
+        /// <summary>
+        /// A list of timestampss and data set names
+        /// </summary>
+        [JsonPropertyName("serviceContext")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string ServiceContext { get; set; }
+
+        /// <summary>
+        /// URL for redirect from funcconsentreceipt if user is in GUI guided process
+        /// </summary>
+        [JsonPropertyName("consentReceiptRedirectUrl")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string ConsentReceiptRedirectUrl { get; set; }
+
+        /// <summary>
+        /// A link to the altinn consent page for this process, used to redirect users back to GUI guided process
+        /// </summary>
+        [JsonPropertyName("altinnConsentUrl")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string AltinnConsentUrl { get; set; }
     }
 }
