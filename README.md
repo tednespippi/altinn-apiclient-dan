@@ -1,7 +1,7 @@
 # Altinn.ApiClients.Dan
 
 ## About
-This is a .NET6 client for [data.altinn.no](https://data.altinn.no) APIs that makes it easy to consume [published datasets](https://altinn.github.io/docs/utviklingsguider/data.altinn.no/beviskoder/) in your .NET6 based integrations.
+This is a .NET5 client for [data.altinn.no](https://data.altinn.no) APIs that makes it easy to consume [published datasets](https://altinn.github.io/docs/utviklingsguider/data.altinn.no/beviskoder/) in your .NET5 based integrations.
 
 ## Installation
 
@@ -95,8 +95,7 @@ public class MyDanClient
         }
 
         // If you have a model for the dataset you're getting you can map it directly
-        UnitBasicInformation result = 
-          await _danClient.GetDataSet<UnitBasicInformation>(datasetname, subject);
+        UnitBasicInformation result = await _danClient.GetDataSet<UnitBasicInformation>(datasetname, subject);
         
     }
 }
