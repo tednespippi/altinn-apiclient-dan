@@ -43,7 +43,7 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
         /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
         /// <returns>The dataset requested as a JSON string</returns>
-        [Get("/directharvest/{evidenceCode}?useEnvelope=false")]
+        [Get("/directharvest/{evidenceCode}?envelope=false")]
         Task<string> GetDirectharvestUnenveloped(
             string evidenceCode,
             string subject,
@@ -84,7 +84,7 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
         /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
         /// <returns>The dataset requested as a JSON string</returns>
-        [Get("/evidence/{accreditationId}/{evidenceCode}?useEnvelope=false")]
+        [Get("/evidence/{accreditationId}/{evidenceCode}?envelope=false")]
         Task<string> GetEvidenceUnenveloped(
             string accreditationId,
             string evidenceCode,

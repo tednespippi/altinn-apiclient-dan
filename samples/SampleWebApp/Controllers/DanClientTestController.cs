@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,11 @@ namespace SampleWebApp.Controllers
         public async Task<ActionResult> Get(string datasetname, string subject, [FromQuery] Dictionary<string, string> parameters)
         {
             DataSet dataset = await _danClient.GetDataSet(datasetname, subject, null, parameters);
+
+            // Example mapping directly to a model
+            UnitBasicInformation ubi =
+                await _danClient.GetDataSet<UnitBasicInformation>(datasetname, subject, null, parameters);
+
             return Content(dataset.ToHtmlTable(), "text/html; charset=utf-8");
         }
 
@@ -130,5 +136,56 @@ namespace SampleWebApp.Controllers
             return sb.ToString();
         }
 
+    }
+
+    public class UnitBasicInformation
+    {
+        public string OrganizationNumber { get; set; }
+
+        public string OrganizationName { get; set; }
+
+        public string OrganizationForm { get; set; }
+
+        public string IndustryCode1 { get; set; }
+
+        public string IndustryCode1Description { get; set; }
+
+        public string IndustryCode2 { get; set; }
+
+        public string IndustryCode2Description { get; set; }
+
+        public string IndustryCode3 { get; set; }
+
+        public string IndustryCode3Description { get; set; }
+
+        public string BusinessAddressStreet { get; set; }
+
+        public string BusinessAddressZip { get; set; }
+
+        public string BusinessAddressCity { get; set; }
+
+        public string PostalAddressStreet { get; set; }
+
+        public string PostalAddressZip { get; set; }
+
+        public string PostalAddressCountry { get; set; }
+
+        public DateTime CreatedInCentralRegisterForLegalEntities { get; set; }
+
+        public DateTime Established { get; set; }
+
+        public bool IsInRegisterOfBusinessEnterprises { get; set; }
+
+        public bool IsInValueAddedTaxRegister { get; set; }
+
+        public string LatestFinacialStatement { get; set; }
+
+        public string NumberOfEmployees { get; set; }
+
+        public bool IsBeingDissolved { get; set; }
+
+        public bool IsUnderBankruptcy { get; set; }
+
+        public bool IsBeingForciblyDissolved { get; set; }
     }
 }
