@@ -59,8 +59,17 @@ namespace Altinn.ApiClients.Dan.Models
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string LanguageCode { get; set; }
 
+        /// <summary>
+        /// URL for redirect from funcconsentreceipt if user is in GUI guided process
+        /// </summary>
         [JsonPropertyName("consentReceiptRedirectUrl")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string ConsentReceiptRedirectUrl { get; set; }
+
+        /// <summary>
+        /// Skip sending a message to Altinn with the consent request and handling it in the client with consentReceiptRedirectUrl
+        /// </summary>
+        [JsonPropertyName("skipAltinnNotification")]
+        public bool SkipAltinnNotification { get; set; }
     }
 }

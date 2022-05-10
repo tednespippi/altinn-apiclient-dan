@@ -46,7 +46,7 @@ namespace SampleWebApp.Controllers
             var dataSetRequests = new List<DataSetRequest>();
             dataSetRequests.Add(GetDataSetRequest(datasetname, parameters));
 
-            Accreditation accreditation = await _danClient.CreateDataSetRequest(dataSetRequests, subject, "991825827", string.IsNullOrEmpty(parameters["reference"]) ? null : parameters["reference"], string.IsNullOrEmpty(parameters["redir"]) ? null : parameters["redir"]);
+            Accreditation accreditation = await _danClient.CreateDataSetRequest(dataSetRequests, subject, "991825827", string.IsNullOrEmpty(parameters["reference"]) ? null : parameters["reference"], string.IsNullOrEmpty(parameters["redir"]) ? null : parameters["redir"], bool.Parse(parameters["skipCorr"]));
 
             return Content(accreditation.ToHtmlTable(), "text/html; charset=utf-8");
         }

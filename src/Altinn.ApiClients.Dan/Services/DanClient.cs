@@ -99,7 +99,7 @@ namespace Altinn.ApiClients.Dan.Services
 
         /// <inheritdoc />
         public async Task<Accreditation> CreateDataSetRequest(List<DataSetRequest> dataSetRequests, string subject,
-            string requestor = null, string consentReference = null, string consentRedirectUrl = null)
+            string requestor = null, string consentReference = null, string consentRedirectUrl = null, bool skipAltinnNotification = false)
         {
             var authorizationRequest = new AuthorizationRequest()
             {
@@ -107,7 +107,8 @@ namespace Altinn.ApiClients.Dan.Services
                 Subject = subject,
                 Requestor = requestor,
                 ConsentReference = consentReference,
-                ConsentReceiptRedirectUrl = consentRedirectUrl
+                ConsentReceiptRedirectUrl = consentRedirectUrl,
+                SkipAltinnNotification = skipAltinnNotification
             };
 
             try

@@ -12,7 +12,7 @@
 
             document.getElementById('get2').addEventListener('click',
                 function () {
-                    window.location = "/danclienttest/auth/UnitBasicInformation/" + document.getElementById('subject2').value + "?reference=" + document.getElementById('reference').value + "&redir=" + document.getElementById('redir').value;
+                    window.location = "/danclienttest/auth/UnitBasicInformation/" + document.getElementById('subject2').value + "?reference=" + document.getElementById('reference').value + "&redir=" + document.getElementById('redir').value + "&skipCorr=" + document.getElementById('skipCorr').checked;
                 });
 
 
@@ -40,10 +40,16 @@
     <h3>2a. Get basic unit information (authrequest)</h3>
     <label>Organization number</label>
     <input type="text" id="subject2" value="991825827"><br />
+
     <label>ConsentReference</label>
-    <input type="text" id="reference" value="referencexxx">
+    <input type="text" id="reference" value="referencexxx"> <br />
+
+    <label>Skip sending Altinn notification for consent</label>
+    <input type="checkbox" id="skipCorr" value=""> <br />
+
     <label>Redirecturl</label>
-    <input type="text" id="redir" value="https://www.vg.no">
+    <input type="text" id="redir" value="https://www.vg.no"><br />
+
     <button id="get2">Get accreditation </button> (copy AccreditationId from the next page)
 
     <h3>2b. Get accreditation status</h3>
