@@ -33,6 +33,28 @@ namespace Altinn.ApiClients.Dan.Interfaces
             [Header("X-Forward-Access-Token")] string forwardAccessToken = null);
 
         /// <summary>
+        /// Gets a dataset directly without a pre-existing accreditation, not using a response envelope
+        /// </summary>
+        /// <param name="evidenceCode">The name of the dataset to request</param>
+        /// <param name="subject">The party data is requested for</param>
+        /// <param name="requestor">The party requesting data. If not set, will use authenticated party.</param>
+        /// <param name="parameters">Any query parameters the dataset supports/requires</param>
+        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <returns>The dataset requested as a JSON string</returns>
+        [Get("/directharvest/{evidenceCode}?useEnvelope=false")]
+        Task<string> GetDirectharvestUnenveloped(
+            string evidenceCode,
+            string subject,
+            string requestor = null,
+            Dictionary<string, string> parameters = null,
+            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool reuseToken = false,
+            [Header("X-Forward-Access-Token")] string forwardAccessToken = null);
+
+
+        /// <summary>
         /// Gets a dataset associated with an existing accreditation
         /// </summary>
         /// <exception cref="ApiException">Thrown when fails to make API call</exception>
@@ -41,9 +63,29 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
         /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
         /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <param name="useEnvelope">If false, will attempt to unwrap the fields in the dataset to a single object for easier mapping to strong types.</param>
         /// <returns>The dataset requested</returns>
         [Get("/evidence/{accreditationId}/{evidenceCode}")]
         Task<DataSet> GetEvidence(
+            string accreditationId,
+            string evidenceCode,
+            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool reuseToken = false,
+            [Header("X-Forward-Access-Token")] string forwardAccessToken = null,
+            bool useEnvelope = true);
+
+        /// <summary>
+        /// Gets a dataset associated with an existing accreditation, not using a response envelope
+        /// </summary>
+        /// <exception cref="ApiException">Thrown when fails to make API call</exception>
+        /// <param name="accreditationId">The id of the accreditation</param>
+        /// <param name="evidenceCode">The name of the dataset to get data from</param>
+        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <returns>The dataset requested as a JSON string</returns>
+        [Get("/evidence/{accreditationId}/{evidenceCode}?useEnvelope=false")]
+        Task<string> GetEvidenceUnenveloped(
             string accreditationId,
             string evidenceCode,
             TokenOnBehalfOf? tokenOnBehalfOf = null,

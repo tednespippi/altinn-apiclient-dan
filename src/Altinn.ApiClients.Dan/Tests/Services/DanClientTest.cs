@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Altinn.ApiClients.Dan.Interfaces;
 using Altinn.ApiClients.Dan.Models;
@@ -14,7 +12,7 @@ using NUnit.Framework;
 
 namespace Tests.Services
 {
-
+    [ExcludeFromCodeCoverage]
     [TestFixture]
     public class DanClientTest
     {
@@ -132,7 +130,7 @@ namespace Tests.Services
             // Setup
             var danApi = new Mock<IDanApi>();
             danApi
-                .Setup(x => x.GetDirectharvest(
+                .Setup(x => x.GetDirectharvestUnenveloped(
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
@@ -140,19 +138,7 @@ namespace Tests.Services
                     It.IsAny<TokenOnBehalfOf?>(),
                     It.IsAny<bool>(),
                     It.IsAny<string>()))
-                .ReturnsAsync(new DataSet
-                {
-                    Values = new List<DataSetValue>
-                    {
-                        new()
-                        {
-                            Name = "SomeJson",
-                            Value = "{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2035_06_12\"}",
-                            ValueType = DataSetValueType.JsonSchema
-                        }
-
-                    }
-                });
+                .ReturnsAsync("{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2035_06_12\"}");
 
             var danClient = new DanClient(danApi.Object)
             {
@@ -223,7 +209,71 @@ namespace Tests.Services
         }
 
         [Test]
-        public async Task DeserializeTypedFromFirstJsonField_Ok()
+        public async Task DeserializeTypedWithoutDeserializeField_Ok()
+        {
+            // Setup
+            var danApi = new Mock<IDanApi>();
+            danApi
+                .Setup(x => x.GetDirectharvestUnenveloped(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<TokenOnBehalfOf?>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<string>()))
+                .ReturnsAsync("{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2021-12-12T04:56:12\"}");
+
+            var danClient = new DanClient(danApi.Object);
+
+            // Act
+            MyModel result = await danClient.GetDataSet<MyModel>("a", "a");
+
+            // Verify
+            Assert.IsNotNull(result);
+            Assert.IsFalse(string.IsNullOrEmpty(result.SomeString));
+            Assert.AreEqual(result.SomeNumber, (decimal)123);
+            Assert.IsNotNull(result.SomeDateTime);
+            Assert.IsFalse(result.SomeDateTime.Equals(DateTime.MinValue));
+
+        }
+
+        [Test]
+        public void DeserializeTypedSuppliedFieldNotJsonType_Fail()
+        {
+            // Setup
+            var danApi = new Mock<IDanApi>();
+            danApi
+                .Setup(x => x.GetDirectharvest(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<TokenOnBehalfOf?>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<string>()))
+                .ReturnsAsync(new DataSet
+                {
+                    Values = new List<DataSetValue>
+                    {
+                        new()
+                        {
+                            Name = "SomeString",
+                            Value = "{}",
+                            ValueType = DataSetValueType.String
+                        }
+                    }
+                });
+
+            var danClient = new DanClient(danApi.Object);
+
+            // Act / verify
+            Assert.ThrowsAsync<DanException>(async () =>
+                await danClient.GetDataSet<MyModel>("a", "a", deserializeField: "SomeString"));
+        }
+
+        [Test]
+        public void DeserializeTypedSuppliedFieldInvalidJson_Fail()
         {
             // Setup
             var danApi = new Mock<IDanApi>();
@@ -243,55 +293,8 @@ namespace Tests.Services
                         new()
                         {
                             Name = "SomeJson",
-                            Value = "{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2021-12-12T04:56:12\"}",
+                            Value = "notjson",
                             ValueType = DataSetValueType.JsonSchema
-                        },
-                        new()
-                        {
-                            Name = "SomeString",
-                            Value = "Bar",
-                            ValueType = DataSetValueType.String
-                        }
-                    }
-                });
-
-            var danClient = new DanClient(danApi.Object);
-
-            // Act
-            MyModel result = await danClient.GetDataSet<MyModel>("a", "a");
-
-            // Verify
-            Assert.IsNotNull(result);
-            Assert.IsFalse(string.IsNullOrEmpty(result.SomeString));
-            Assert.AreEqual(result.SomeNumber, (decimal)123);
-            Assert.IsNotNull(result.SomeDateTime);
-            Assert.IsFalse(result.SomeDateTime.Equals(DateTime.MinValue));
-
-        }
-
-        [Test]
-        public void DeserializeTypedNoJsonTypes_Fail()
-        {
-            // Setup
-            var danApi = new Mock<IDanApi>();
-            danApi
-                .Setup(x => x.GetDirectharvest(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<Dictionary<string, string>>(),
-                    It.IsAny<TokenOnBehalfOf?>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<string>()))
-                .ReturnsAsync(new DataSet
-                {
-                    Values = new List<DataSetValue>
-                    {
-                        new()
-                        {
-                            Name = "SomeString",
-                            Value = "Bar",
-                            ValueType = DataSetValueType.String
                         }
                     }
                 });
@@ -300,7 +303,7 @@ namespace Tests.Services
 
             // Act / verify
             Assert.ThrowsAsync<DanException>(async () =>
-                await danClient.GetDataSet<MyModel>("a", "a"));
+                await danClient.GetDataSet<MyModel>("a", "a", deserializeField: "SomeJson"));
         }
 
         private DataSet GetDataSet()

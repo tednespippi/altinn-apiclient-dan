@@ -63,15 +63,33 @@ namespace Altinn.ApiClients.Dan.Services
         {
             try
             {
-                var result = await GetDataSet(
-                    dataSetName,
-                    subject,
-                    requestor,
-                    parameters,
-                    tokenOnBehalfOf,
-                    reuseToken,
-                    forwardAccessToken);
-                return GetDataSetAsTyped<T>(result, deserializeField);
+                if (deserializeField != null)
+                {
+                    var result = await GetDataSet(
+                        dataSetName,
+                        subject,
+                        requestor,
+                        parameters,
+                        tokenOnBehalfOf,
+                        reuseToken,
+                        forwardAccessToken);
+
+                    return GetDataSetAsTyped<T>(result, deserializeField);
+                }
+                else
+                {
+                    var result = await _danApi.GetDirectharvestUnenveloped(
+                        dataSetName,
+                        subject,
+                        requestor,
+                        parameters,
+                        tokenOnBehalfOf,
+                        reuseToken,
+                        forwardAccessToken);
+
+                    return GetUnenvelopedDataSetAsTyped<T>(result);
+                }
+                
             }
             catch (ApiException ex)
             {
@@ -136,13 +154,28 @@ namespace Altinn.ApiClients.Dan.Services
         {
             try
             {
-                var result = await GetDataSetFromAccreditation(
-                    accreditationguid,
-                    datasetname,
-                    tokenOnBehalfOf,
-                    reuseToken,
-                    forwardAccessToken);
-                return GetDataSetAsTyped<T>(result, deserializeField);
+                if (deserializeField != null)
+                {
+                    var result = await GetDataSetFromAccreditation(
+                        accreditationguid,
+                        datasetname,
+                        tokenOnBehalfOf,
+                        reuseToken,
+                        forwardAccessToken);
+
+                    return GetDataSetAsTyped<T>(result, deserializeField);
+                }
+                else
+                {
+                    var result = await _danApi.GetEvidenceUnenveloped(
+                        accreditationguid,
+                        datasetname,
+                        tokenOnBehalfOf,
+                        reuseToken,
+                        forwardAccessToken);
+
+                    return GetUnenvelopedDataSetAsTyped<T>(result);
+                }
             }
             catch (ApiException ex)
             {
@@ -183,44 +216,48 @@ namespace Altinn.ApiClients.Dan.Services
         /// </summary>
         /// <typeparam name="T">The type to deserialize to</typeparam>
         /// <param name="dataSet">The dataset containing a field to deserialize</param>
-        /// <param name="deserializeField">Optionally the field in the dataset to deserialize. If not supplied, use the first.</param>
+        /// <param name="deserializeField">The field in the dataset to deserialize.</param>
         /// <returns>The result as an instance of the supplied type.</returns>
         /// <exception cref="DanException"></exception>
         private T GetDataSetAsTyped<T>(DataSet dataSet, string deserializeField) where T : new()
         {
+            if (deserializeField == null)
+            {
+                throw new ArgumentNullException(nameof(deserializeField));
+            }
+
             try
             {
-                // If deserializeField is supplied, attempt to deserialize that and ignore everything else
-                if (deserializeField != null)
-                {
-                    var deserializeDataSetValue =
-                        dataSet.Values.FirstOrDefault(x => x.Name == deserializeField);
-                    if (deserializeDataSetValue == null)
-                    {
-                        throw new DanException(
-                            $"Target field for deserialization '{deserializeField}' was not present in the dataset");
-                    }
 
-                    return deserializeDataSetValue.Value == null
-                        ? default
-                        : Configuration.Deserializer.Deserialize<T>(deserializeDataSetValue.Value.ToString()!);
+                var deserializeDataSetValue =
+                    dataSet.Values.FirstOrDefault(x => x.Name == deserializeField);
+                if (deserializeDataSetValue == null)
+                {
+                    throw new DanException(
+                        $"Target field for deserialization '{deserializeField}' was not present in the dataset");
                 }
 
-                // If deserializeField is not supplied, and the first field in the return is of type "JsonSchema", attempt to deserialize that and ignore everything else
-                var firstDataSetValue = dataSet.Values.First();
-                if (firstDataSetValue.ValueType == DataSetValueType.JsonSchema)
+                if (deserializeDataSetValue.ValueType != DataSetValueType.JsonSchema)
                 {
-                    return firstDataSetValue.Value == null
-                        ? default
-                        : Configuration.Deserializer.Deserialize<T>(firstDataSetValue.Value.ToString()!);
+                    throw new DanException(
+                        $"Mapping to model '{typeof(T).Name}' requires the dataset to have a field of type 'JsonSchema', which is either the first field or specified via the 'deserializeField' parameter");
                 }
 
-                // TODO!
-                // Attempt to manually map the dataset to the supplied type via reflection. This will require mapping of
-                // all DateSetValueTypes to appropiate .NET types.
+                return deserializeDataSetValue.Value == null
+                    ? default
+                    : Configuration.Deserializer.Deserialize<T>(deserializeDataSetValue.Value.ToString()!);
+            }
+            catch (Exception ex)
+            {
+                throw new DanException("Unable to deserialize to requested type: " + ex.Message, ex);
+            }
+        }
 
-                throw new DanException(
-                    $"Mapping to model '{typeof(T).Name}' requires the dataset to have a field of type 'JsonSchema', which is either the first field or specified via the 'deserializeField' parameter");
+        private T GetUnenvelopedDataSetAsTyped<T>(string resultJson) where T : new()
+        {
+            try
+            {
+                return Configuration.Deserializer.Deserialize<T>(resultJson);
             }
             catch (Exception ex)
             {

@@ -16,12 +16,12 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Altinn.ApiClients.Maskinporten" Version="1.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+      <PackageReference Include="Altinn.ApiClients.Maskinporten" Version="2.1.0" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-      <PackageReference Include="Refit" Version="6.0.94" />
-      <PackageReference Include="Refit.HttpClientFactory" Version="6.0.94" />
+      <PackageReference Include="Refit" Version="6.3.2" />
+      <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
     </ItemGroup>
 
     <ItemGroup>

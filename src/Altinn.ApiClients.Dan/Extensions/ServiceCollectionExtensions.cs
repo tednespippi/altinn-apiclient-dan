@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Altinn.ApiClients.Dan.Handlers;
 using Altinn.ApiClients.Dan.Interfaces;
 using Altinn.ApiClients.Dan.Models;
@@ -6,7 +7,6 @@ using Altinn.ApiClients.Dan.Services;
 using Altinn.ApiClients.Maskinporten.Handlers;
 using Altinn.ApiClients.Maskinporten.Interfaces;
 using Altinn.ApiClients.Maskinporten.Services;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -18,14 +18,21 @@ namespace Altinn.ApiClients.Dan.Extensions
     {
         public static void AddDanClient<T>(this IServiceCollection services, Func<IServiceProvider, IDanConfiguration> danConfigurationProvider = null) where T : class, IClientDefinition
         {
-            services.TryAddSingleton<IMemoryCache, MemoryCache>();
-            services.TryAddSingleton<T>();
-            services.TryAddSingleton<IDanConfiguration>(sp => danConfigurationProvider != null
+            // We need a provider to cache tokens. If one is not already provided by the user, use MemoryTokenCacheProvider
+            if (services.All(x => x.ServiceType != typeof(ITokenCacheProvider)))
+            {
+                services.AddMemoryCache();
+                services.TryAddSingleton<ITokenCacheProvider, MemoryTokenCacheProvider>();
+            }
+
+            services.TryAddSingleton(sp => danConfigurationProvider != null
                 ? danConfigurationProvider.Invoke(sp)
                 : new DefaultDanConfiguration());
             services.TryAddSingleton<IDanClient, DanClient>();
+
+            services.TryAddSingleton<T>();
             services.TryAddSingleton<IMaskinportenService, MaskinportenService>();
-            services.TryAddSingleton<MaskinportenTokenHandler<T>>();
+            services.TryAddTransient<MaskinportenTokenHandler<T>>();
 
             DanSettings danSettings = null;
             services.AddRefitClient<IDanApi>(sp =>
@@ -43,7 +50,6 @@ namespace Altinn.ApiClients.Dan.Extensions
 
         public static void AddDanClientWithAccessTokenRetriever<T>(this IServiceCollection services) where T : class, IAccessTokenRetriever
         {
-            services.TryAddSingleton<IMemoryCache, MemoryCache>();
             services.TryAddSingleton<IDanClient, DanClient>();
             services.TryAddSingleton<IAccessTokenRetriever, T>();
             services.TryAddTransient<AccessTokenRetrieverHandler>();
