@@ -70,9 +70,16 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="consentReference">The consent reference used in notifying the subject. Only used if any of the dataasets require consent from the subject</param>
         /// <param name="consentRedirectUrl">The consent redirect URL. Supply to override the default receipt page the subject is sent to after answering the consent request</param>
         /// <param name="skipAltinnNotification">Skip sending a consent request message to Altinn to handle it in-client</param>
+        /// <param name="legalBasisList">List of legal basis elements referenced from dataset requests, if any</param>
         /// <returns>The accreditation object</returns>
-        Task<Accreditation> CreateDataSetRequest(List<DataSetRequest> dataSetRequest, string subject,
-            string requestor = null, string consentReference = null, string consentRedirectUrl = null, bool skipAltinnNotification = false);
+        Task<Accreditation> CreateDataSetRequest(
+            List<DataSetRequest> dataSetRequest, 
+            string subject,
+            string requestor = null, 
+            string consentReference = null, 
+            string consentRedirectUrl = null, 
+            bool skipAltinnNotification = false, 
+            List<LegalBasis> legalBasisList = null);
 
         /// <summary>
         /// Gets a dataset associated with an existing accreditation
