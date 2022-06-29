@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <PackageId>Altinn.ApiClients.Dan</PackageId>
     <Company>Digitaliseringsdirektoratet</Company>
     <PackageTags>digdir;altinn;dan;data.altinn.no</PackageTags>

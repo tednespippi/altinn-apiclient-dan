@@ -17,6 +17,11 @@ namespace Altinn.ApiClients.Dan.Services
         /// <inheritdoc />
         public IDanConfiguration Configuration { get; set; }
 
+        /// <summary>
+        /// Constructs a DAN client 
+        /// </summary>
+        /// <param name="danApi">The Refit implementation for the DAN API</param>
+        /// <param name="danConfiguration">Optional DAN configuration object for specifying a custom deserializer</param>
         public DanClient(IDanApi danApi, IDanConfiguration danConfiguration = null)
         {
             Configuration = danConfiguration ?? new DefaultDanConfiguration();

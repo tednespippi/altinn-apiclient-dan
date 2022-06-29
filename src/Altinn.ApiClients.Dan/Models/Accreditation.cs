@@ -37,6 +37,10 @@ namespace Altinn.ApiClients.Dan.Models
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DataSetRequestStatusCode AggregateStatus { get; set; }
 
+        /// <summary>
+        /// Gets or sets the flag indicating whether this is an accreditation for a direct harvest
+        /// </summary>
+        /// <remarks>This is deprecated, as accreditations for direct harvests in the future will not be created at all</remarks>
         [JsonPropertyName("isDirectHarvest")] public bool IsDirectHarvest { get; set; }
 
         /// <summary>

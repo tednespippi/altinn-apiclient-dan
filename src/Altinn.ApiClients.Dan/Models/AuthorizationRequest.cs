@@ -55,6 +55,9 @@ namespace Altinn.ApiClients.Dan.Models
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string ExternalReference { get; set; }
 
+        /// <summary>
+        /// The selected language for the accreditation, used for consent request texts and notifications. Valid values: no-nb, no-nn, en
+        /// </summary>
         [JsonPropertyName("languageCode")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string LanguageCode { get; set; }

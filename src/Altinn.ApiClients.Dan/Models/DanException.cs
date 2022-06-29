@@ -4,13 +4,27 @@ using Refit;
 
 namespace Altinn.ApiClients.Dan.Models
 {
+    /// <summary>
+    /// The main DAN exception object.
+    /// </summary>
     public class DanException : Exception
-    { 
+    {
+        /// <inheritdoc />
         public DanException(string message) : base(message) {}
+
+        /// <inheritdoc />
         public DanException(string message, Exception innerException) : base(message, innerException) {}
 
+        /// <summary>
+        /// An Error object containing additional error information, if any
+        /// </summary>
         public Error Error { get; set; }
 
+        /// <summary>
+        /// Transforms an ApiException from Refit to a DanException
+        /// </summary>
+        /// <param name="exception">The ApiException from Refit</param>
+        /// <returns>A DanException</returns>
         public static DanException FromApiException(ApiException exception)
         {
             Error error;

@@ -14,8 +14,17 @@ using Refit;
 
 namespace Altinn.ApiClients.Dan.Extensions
 {
+    /// <summary>
+    /// Service collection extensions for DAN
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds a DAN Client to the service collection
+        /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <param name="danConfigurationProvider">Provider for configuration settings</param>
+        /// <typeparam name="T">The Maskinporten client definition that DAN should use</typeparam>
         public static void AddDanClient<T>(this IServiceCollection services, Func<IServiceProvider, IDanConfiguration> danConfigurationProvider = null) where T : class, IClientDefinition
         {
             // We need a provider to cache tokens. If one is not already provided by the user, use MemoryTokenCacheProvider
@@ -48,6 +57,11 @@ namespace Altinn.ApiClients.Dan.Extensions
                 .AddHttpMessageHandler<MaskinportenTokenHandler<T>>();
         }
 
+        /// <summary>
+        /// Adds a DAN Client to the service collection with a custom token retriever for when Maskinporten-client shouldn't be used
+        /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <typeparam name="T">The implementation of IAccessTokenRetriever to be used</typeparam>
         public static void AddDanClientWithAccessTokenRetriever<T>(this IServiceCollection services) where T : class, IAccessTokenRetriever
         {
             services.TryAddSingleton<IDanClient, DanClient>();
