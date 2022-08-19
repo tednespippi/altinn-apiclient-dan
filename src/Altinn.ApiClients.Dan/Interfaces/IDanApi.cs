@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Altinn.ApiClients.Dan.Models;
-using Altinn.ApiClients.Dan.Models.Enums;
 using Refit;
 
 namespace Altinn.ApiClients.Dan.Interfaces
@@ -18,9 +17,9 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="subject">The party data is requested for</param>
         /// <param name="requestor">The party requesting data. If not set, will use authenticated party.</param>
         /// <param name="parameters">Any query parameters the dataset supports/requires</param>
-        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
-        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
-        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
         /// <returns>The dataset requested</returns>
         [Get("/directharvest/{evidenceCode}")]
         Task<DataSet> GetDirectharvest(
@@ -28,7 +27,7 @@ namespace Altinn.ApiClients.Dan.Interfaces
             string subject,
             string requestor = null,
             Dictionary<string, string> parameters = null,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             [Header("X-Forward-Access-Token")] string forwardAccessToken = null);
 
@@ -39,9 +38,9 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="subject">The party data is requested for</param>
         /// <param name="requestor">The party requesting data. If not set, will use authenticated party.</param>
         /// <param name="parameters">Any query parameters the dataset supports/requires</param>
-        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
-        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
-        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
         /// <returns>The dataset requested as a JSON string</returns>
         [Get("/directharvest/{evidenceCode}?envelope=false")]
         Task<string> GetDirectharvestUnenveloped(
@@ -49,7 +48,7 @@ namespace Altinn.ApiClients.Dan.Interfaces
             string subject,
             string requestor = null,
             Dictionary<string, string> parameters = null,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             [Header("X-Forward-Access-Token")] string forwardAccessToken = null);
 
@@ -60,16 +59,16 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <exception cref="ApiException">Thrown when fails to make API call</exception>
         /// <param name="accreditationId">The id of the accreditation</param>
         /// <param name="evidenceCode">The name of the dataset to get data from</param>
-        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
-        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
-        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
         /// <param name="useEnvelope">If false, will attempt to unwrap the fields in the dataset to a single object for easier mapping to strong types.</param>
         /// <returns>The dataset requested</returns>
         [Get("/evidence/{accreditationId}/{evidenceCode}")]
         Task<DataSet> GetEvidence(
             string accreditationId,
             string evidenceCode,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             [Header("X-Forward-Access-Token")] string forwardAccessToken = null,
             bool useEnvelope = true);
@@ -80,15 +79,15 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <exception cref="ApiException">Thrown when fails to make API call</exception>
         /// <param name="accreditationId">The id of the accreditation</param>
         /// <param name="evidenceCode">The name of the dataset to get data from</param>
-        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
-        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
-        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
         /// <returns>The dataset requested as a JSON string</returns>
         [Get("/evidence/{accreditationId}/{evidenceCode}?envelope=false")]
         Task<string> GetEvidenceUnenveloped(
             string accreditationId,
             string evidenceCode,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             [Header("X-Forward-Access-Token")] string forwardAccessToken = null);
 

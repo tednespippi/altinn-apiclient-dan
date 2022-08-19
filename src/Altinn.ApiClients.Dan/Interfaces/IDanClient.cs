@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Altinn.ApiClients.Dan.Models;
-using Altinn.ApiClients.Dan.Models.Enums;
 
 namespace Altinn.ApiClients.Dan.Interfaces
 {
@@ -23,16 +22,16 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="subject">The party data is requested for</param>
         /// <param name="requestor">The party requesting data. If not set, will use authenticated party.</param>
         /// <param name="parameters">Any query parameters the dataset supports/requires</param>
-        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
-        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
-        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
         /// <returns>The dataset requested as an iterable dictionary</returns>
         Task<DataSet> GetDataSet(
             string dataSetName,
             string subject,
             string requestor = null,
             Dictionary<string, string> parameters = null,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             string forwardAccessToken = null);
 
@@ -47,9 +46,9 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="requestor">The party requesting data. If not set, will use authenticated party.</param>
         /// <param name="parameters">Any query parameters the dataset supports/requires</param>
         /// <param name="deserializeField">Specifies what field in the dataset to deserialize. If not supplied, the first field will be used</param>
-        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
-        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
-        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
         /// <returns>The dataset mapped to the supplied model</returns>
         Task<T> GetDataSet<T>(
             string dataSetName,
@@ -57,7 +56,7 @@ namespace Altinn.ApiClients.Dan.Interfaces
             string requestor = null,
             Dictionary<string, string> parameters = null,
             string deserializeField = null,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             string forwardAccessToken = null) where T : new();
 
@@ -86,15 +85,15 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// </summary>
         /// <param name="accreditationGuid">The id of the accreditation</param>
         /// <param name="datasetname">The name of the dataset to get data from</param>
-        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
-        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
-        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
         /// <returns>The dataset requested</returns>
         /// <exception cref="DanException"></exception>
         Task<DataSet> GetDataSetFromAccreditation(
             string accreditationGuid,
             string datasetname,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             string forwardAccessToken = null);
 
@@ -107,16 +106,16 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="accreditationGuid">The id of the accreditation</param>
         /// <param name="datasetname">The name of the dataset to get data from</param>
         /// <param name="deserializeField">Specifies what field in the dataset to deserialize. If not supplied, the first field will be used</param>
-        /// <param name="tokenOnBehalfOf">If set, will attempt to get supplier access token onbehalf of supplied party</param>
-        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOf</c></param>
-        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOf</c> and <c>reuseToken</c></param>
+        /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
+        /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
+        /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
         /// <returns>The dataset mapped to the supplied model</returns>
         /// <exception cref="DanException"></exception>
         Task<T> GetDataSetFromAccreditation<T>(
             string accreditationGuid,
             string datasetname,
             string deserializeField = null,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             string forwardAccessToken = null) where T : new();
 

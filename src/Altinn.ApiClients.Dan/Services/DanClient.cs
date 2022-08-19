@@ -34,7 +34,7 @@ namespace Altinn.ApiClients.Dan.Services
             string subject,
             string requestor = null,
             Dictionary<string, string> parameters = null,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             string forwardAccessToken = null)
         {
@@ -45,7 +45,7 @@ namespace Altinn.ApiClients.Dan.Services
                     subject,
                     requestor,
                     parameters,
-                    tokenOnBehalfOf,
+                    tokenOnBehalfOfOwner,
                     reuseToken,
                     forwardAccessToken);
             }
@@ -62,7 +62,7 @@ namespace Altinn.ApiClients.Dan.Services
             string requestor = null,
             Dictionary<string, string> parameters = null,
             string deserializeField = null,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             string forwardAccessToken = null) where T : new()
         {
@@ -75,7 +75,7 @@ namespace Altinn.ApiClients.Dan.Services
                         subject,
                         requestor,
                         parameters,
-                        tokenOnBehalfOf,
+                        tokenOnBehalfOfOwner,
                         reuseToken,
                         forwardAccessToken);
 
@@ -88,7 +88,7 @@ namespace Altinn.ApiClients.Dan.Services
                         subject,
                         requestor,
                         parameters,
-                        tokenOnBehalfOf,
+                        tokenOnBehalfOfOwner,
                         reuseToken,
                         forwardAccessToken);
 
@@ -131,7 +131,7 @@ namespace Altinn.ApiClients.Dan.Services
         public async Task<DataSet> GetDataSetFromAccreditation(
             string accreditationguid,
             string datasetname,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             string forwardAccessToken = null)
         {
@@ -140,7 +140,7 @@ namespace Altinn.ApiClients.Dan.Services
                 return await _danApi.GetEvidence(
                     accreditationguid,
                     datasetname,
-                    tokenOnBehalfOf,
+                    tokenOnBehalfOfOwner,
                     reuseToken,
                     forwardAccessToken);
             }
@@ -155,7 +155,7 @@ namespace Altinn.ApiClients.Dan.Services
             string accreditationguid,
             string datasetname,
             string deserializeField = null,
-            TokenOnBehalfOf? tokenOnBehalfOf = null,
+            bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
             string forwardAccessToken = null) where T : new()
         {
@@ -166,7 +166,7 @@ namespace Altinn.ApiClients.Dan.Services
                     var result = await GetDataSetFromAccreditation(
                         accreditationguid,
                         datasetname,
-                        tokenOnBehalfOf,
+                        tokenOnBehalfOfOwner,
                         reuseToken,
                         forwardAccessToken);
 
@@ -177,7 +177,7 @@ namespace Altinn.ApiClients.Dan.Services
                     var result = await _danApi.GetEvidenceUnenveloped(
                         accreditationguid,
                         datasetname,
-                        tokenOnBehalfOf,
+                        tokenOnBehalfOfOwner,
                         reuseToken,
                         forwardAccessToken);
 
