@@ -7,7 +7,6 @@ using Altinn.ApiClients.Dan.Interfaces;
 using Altinn.ApiClients.Dan.Models;
 using Altinn.ApiClients.Dan.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace SampleWebApp.Controllers
 {
@@ -49,7 +48,9 @@ namespace SampleWebApp.Controllers
 
             Accreditation accreditation = await _danClient.CreateDataSetRequest(dataSetRequests, subject, "991825827", string.IsNullOrEmpty(parameters["reference"]) ? null : parameters["reference"], string.IsNullOrEmpty(parameters["redir"]) ? null : parameters["redir"], bool.Parse(parameters["skipCorr"]));
 
-            var x = await _danClient.CreateDataSetRequest(dataSetRequests, "991825827", legalBasisList: new List<LegalBasis>
+            /* 
+            // Example sending a legal basis 
+            var x = await _danClient.CreateDataSetRequest(dataSetRequests, subject, "991825827", legalBasisList: new List<LegalBasis>
             {
                 new()
                 {
@@ -58,6 +59,7 @@ namespace SampleWebApp.Controllers
                     Content = "1234"
                 }
             });
+            */
 
             return Content(accreditation.ToHtmlTable(), "text/html; charset=utf-8");
         }
