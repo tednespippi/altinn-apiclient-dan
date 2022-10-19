@@ -4,6 +4,7 @@ using Altinn.ApiClients.Dan.Handlers;
 using Altinn.ApiClients.Dan.Interfaces;
 using Altinn.ApiClients.Dan.Models;
 using Altinn.ApiClients.Dan.Services;
+using Altinn.ApiClients.Maskinporten.Config;
 using Altinn.ApiClients.Maskinporten.Handlers;
 using Altinn.ApiClients.Maskinporten.Interfaces;
 using Altinn.ApiClients.Maskinporten.Services;
@@ -24,8 +25,9 @@ namespace Altinn.ApiClients.Dan.Extensions
         /// </summary>
         /// <param name="services">The service collection</param>
         /// <param name="danConfigurationProvider">Provider for configuration settings</param>
+        /// <param name="configureClientDefinition">Delegate to configure Maskinporten client definition</param>
         /// <typeparam name="T">The Maskinporten client definition that DAN should use</typeparam>
-        public static void AddDanClient<T>(this IServiceCollection services, Func<IServiceProvider, IDanConfiguration> danConfigurationProvider = null) where T : class, IClientDefinition
+        public static void AddDanClient<T>(this IServiceCollection services, Func<IServiceProvider, IDanConfiguration> danConfigurationProvider = null, Action<T> configureClientDefinition = null) where T : class, IClientDefinition, new()
         {
             // We need a provider to cache tokens. If one is not already provided by the user, use MemoryTokenCacheProvider
             if (services.All(x => x.ServiceType != typeof(ITokenCacheProvider)))
@@ -38,10 +40,7 @@ namespace Altinn.ApiClients.Dan.Extensions
                 ? danConfigurationProvider.Invoke(sp)
                 : new DefaultDanConfiguration());
             services.TryAddSingleton<IDanClient, DanClient>();
-
-            services.TryAddSingleton<T>();
             services.TryAddSingleton<IMaskinportenService, MaskinportenService>();
-            services.TryAddTransient<MaskinportenTokenHandler<T>>();
 
             DanSettings danSettings = null;
             services.AddRefitClient<IDanApi>(sp =>
@@ -54,7 +53,17 @@ namespace Altinn.ApiClients.Dan.Extensions
                     c.BaseAddress = new Uri(GetUriForEnvironment(danSettings.Environment));
                     c.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", danSettings.SubscriptionKey);
                 })
-                .AddHttpMessageHandler<MaskinportenTokenHandler<T>>();
+                .AddHttpMessageHandler(sp =>
+                {
+                    var clientSettings = sp.GetRequiredService<IOptions<MaskinportenSettings<T>>>().Value;
+                    var clientDefinition = new T
+                    {
+                        ClientSettings = clientSettings
+                    };
+                    configureClientDefinition?.Invoke(clientDefinition);
+
+                    return new MaskinportenTokenHandler(sp.GetRequiredService<IMaskinportenService>(), clientDefinition);
+                });
         }
 
         /// <summary>

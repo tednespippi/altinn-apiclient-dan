@@ -24,7 +24,6 @@ namespace SampleWebApp
             // Configuration for DAN (environment and subscription key)
             services.Configure<DanSettings>(Configuration.GetSection("DanSettings"));
 
-
             // Config for MaskinPorten, using a local PKCS#12 file containing private certificate for signing Maskinporten requests
             services.Configure<MaskinportenSettings<Pkcs12ClientDefinition>>(Configuration.GetSection("MyMaskinportenSettingsForCertFile"));
             // This registers an IDanClient for injection, see Controllers/DanClientTestController.cs for usage example
