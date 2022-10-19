@@ -16,7 +16,7 @@
       This library is used for retrieving datasets via data.altinn.no, utilizing Maskinporten for authentication
     </Description>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Altinn/altinn-apiclient-dan</RepositoryUrl>
+    <RepositoryUrl>https://github.com/data-altinn-no/altinn-apiclient-dan</RepositoryUrl>
   </PropertyGroup>
 
     <ItemGroup>
