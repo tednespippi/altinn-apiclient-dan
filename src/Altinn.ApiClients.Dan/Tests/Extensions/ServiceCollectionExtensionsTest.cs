@@ -32,11 +32,8 @@ namespace Tests.Extensions
             var serviceProvider = services.BuildServiceProvider();
 
             Assert.IsInstanceOf<MemoryCache>(serviceProvider.GetService<IMemoryCache>());
-            Assert.IsInstanceOf<SettingsJwkClientDefinition>(serviceProvider.GetService<SettingsJwkClientDefinition>());
             Assert.IsInstanceOf<DanClient>(serviceProvider.GetService<IDanClient>());
             Assert.IsInstanceOf<MaskinportenService>(serviceProvider.GetService<IMaskinportenService>());
-            Assert.IsInstanceOf<MaskinportenTokenHandler<SettingsJwkClientDefinition>>(serviceProvider
-                .GetService<MaskinportenTokenHandler<SettingsJwkClientDefinition>>());
             Assert.IsInstanceOf<HttpClient>(serviceProvider.GetService<HttpClient>());
             Assert.NotNull(serviceProvider.GetService<IDanApi>());
         }
