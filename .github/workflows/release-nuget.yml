@@ -1,45 +1,74 @@
-# Workflow creating a Github package
 name: Release Nuget
 
 on:
   push:
     tags:
     - "v[0-9]+.[0-9]+.[0-9]+"
+
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      version: ${{ steps.set_version.outputs.version }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
     - name: Setup build environment
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '6.0.x'
         include-prerelease: true
+
     - name: Verify commit exists in origin/main
       run: |
         git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
         git branch --remote --contains | grep origin/main
+
     - name: Set VERSION variable from tag
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+
+    - name: Set version output for job
+      id: set_version
+      run: echo "::set-output name=version::${GITHUB_REF/refs\/tags\/v/}"
+
     - name: Set SOLUTION variable to point to solution file
       run: |
         SOLUTION=$(find . -name '*.sln' -printf "%p" -quit)
         echo "SOLUTION=${SOLUTION}" >> $GITHUB_ENV
+
     - name: Build
       run: dotnet build --configuration Release /p:Version=${VERSION} ${SOLUTION}
+
     - name: Test
       run: dotnet test --configuration Release /p:Version=${VERSION} --no-build ${SOLUTION}
+
     - name: Pack with debug symbols
       run: dotnet pack --configuration Release /p:Version=${VERSION} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --output . ${SOLUTION}
+
+  push-to-github:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Push to GitHub Packages
-      run: dotnet nuget push *.${VERSION}.nupkg --source https://nuget.pkg.github.com/${GITHUB_REPOSITORY%/*}/index.json --api-key ${GITHUB_TOKEN}
+      run: dotnet nuget push *.${{ needs.build.outputs.version }}.nupkg --source https://nuget.pkg.github.com/${GITHUB_REPOSITORY%/*}/index.json --api-key ${GITHUB_TOKEN}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  push-to-nuget:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Push to nuget.org
       env:
         NUGET_ORG_API_KEY: ${{secrets.NUGET_ORG_API_KEY}}
       if: env.NUGET_ORG_API_KEY != null
-      run: dotnet nuget push *.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_ORG_API_KEY }}
+      run: dotnet nuget push *.${{ needs.build.outputs.version }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_ORG_API_KEY }}
