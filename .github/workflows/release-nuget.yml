@@ -47,27 +47,44 @@ jobs:
     - name: Pack with debug symbols
       run: dotnet pack --configuration Release /p:Version=${VERSION} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --output . ${SOLUTION}
 
+    - name: Upload NuGet packages as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: nuget-packages
+        path: ./*.*nupkg      
+
   push-to-github:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - name: Download NuGet packages from artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: nuget-packages
+  
     - name: Checkout
       uses: actions/checkout@v3
-
+  
     - name: Push to GitHub Packages
       run: dotnet nuget push *.${{ needs.build.outputs.version }}.nupkg --source https://nuget.pkg.github.com/${GITHUB_REPOSITORY%/*}/index.json --api-key ${GITHUB_TOKEN}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+  
   push-to-nuget:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - name: Download NuGet packages from artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: nuget-packages
+  
     - name: Checkout
       uses: actions/checkout@v3
-
+  
     - name: Push to nuget.org
       env:
         NUGET_ORG_API_KEY: ${{secrets.NUGET_ORG_API_KEY}}
       if: env.NUGET_ORG_API_KEY != null
       run: dotnet nuget push *.${{ needs.build.outputs.version }}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_ORG_API_KEY }}
+  
