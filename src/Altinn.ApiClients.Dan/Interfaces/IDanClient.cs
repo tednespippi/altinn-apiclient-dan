@@ -49,6 +49,7 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
         /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
         /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
+        /// <param name="query">Optional JMESPath query to filter/transform the dataset. Ignored if <c>deserializeField</c> is set</param>
         /// <returns>The dataset mapped to the supplied model</returns>
         Task<T> GetDataSet<T>(
             string dataSetName,
@@ -58,7 +59,8 @@ namespace Altinn.ApiClients.Dan.Interfaces
             string deserializeField = null,
             bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
-            string forwardAccessToken = null) where T : new();
+            string forwardAccessToken = null,
+            string query = null) where T : new();
 
         /// <summary>
         /// Creates a dataset request to the supplied list of datasets and optional parameters.
@@ -109,6 +111,7 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
         /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
         /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
+        /// <param name="query">Optional JMESPath query to filter/transform the dataset. Ignored if <c>deserializeField</c> is set</param>
         /// <returns>The dataset mapped to the supplied model</returns>
         /// <exception cref="DanException"></exception>
         Task<T> GetDataSetFromAccreditation<T>(
@@ -117,7 +120,8 @@ namespace Altinn.ApiClients.Dan.Interfaces
             string deserializeField = null,
             bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
-            string forwardAccessToken = null) where T : new();
+            string forwardAccessToken = null,
+            string query = null) where T : new();
 
         /// <summary>
         /// Gets the request status for a datasets matching the supplied name within the supplied accreditation

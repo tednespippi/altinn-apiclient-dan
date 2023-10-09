@@ -137,6 +137,7 @@ namespace Tests.Services
                     It.IsAny<Dictionary<string, string>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>(),
+                    It.IsAny<string>(),
                     It.IsAny<string>()))
                 .ReturnsAsync("{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2035_06_12\"}");
 
@@ -221,6 +222,7 @@ namespace Tests.Services
                     It.IsAny<Dictionary<string, string>>(),
                     It.IsAny<bool>(),
                     It.IsAny<bool>(),
+                    It.IsAny<string>(),
                     It.IsAny<string>()))
                 .ReturnsAsync("{\"SomeString\":\"Bar\",\"SomeNumber\":123,\"SomeDateTime\":\"2021-12-12T04:56:12\"}");
 

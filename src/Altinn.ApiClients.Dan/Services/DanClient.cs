@@ -64,7 +64,8 @@ namespace Altinn.ApiClients.Dan.Services
             string deserializeField = null,
             bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
-            string forwardAccessToken = null) where T : new()
+            string forwardAccessToken = null,
+            string query = null) where T : new()
         {
             try
             {
@@ -90,7 +91,8 @@ namespace Altinn.ApiClients.Dan.Services
                         parameters,
                         tokenOnBehalfOfOwner,
                         reuseToken,
-                        forwardAccessToken);
+                        forwardAccessToken,
+                        query);
 
                     return GetUnenvelopedDataSetAsTyped<T>(result);
                 }
@@ -157,7 +159,8 @@ namespace Altinn.ApiClients.Dan.Services
             string deserializeField = null,
             bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
-            string forwardAccessToken = null) where T : new()
+            string forwardAccessToken = null,
+            string query = null) where T : new()
         {
             try
             {
@@ -179,7 +182,8 @@ namespace Altinn.ApiClients.Dan.Services
                         datasetname,
                         tokenOnBehalfOfOwner,
                         reuseToken,
-                        forwardAccessToken);
+                        forwardAccessToken,
+                        query);
 
                     return GetUnenvelopedDataSetAsTyped<T>(result);
                 }

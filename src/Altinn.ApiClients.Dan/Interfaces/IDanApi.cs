@@ -41,6 +41,7 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
         /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
         /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
+        /// <param name="query">Optional JMESPath query to filter/transform the dataset</param>
         /// <returns>The dataset requested as a JSON string</returns>
         [Get("/directharvest/{evidenceCode}?envelope=false")]
         Task<string> GetDirectharvestUnenveloped(
@@ -50,7 +51,8 @@ namespace Altinn.ApiClients.Dan.Interfaces
             Dictionary<string, string> parameters = null,
             bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
-            [Header("X-Forward-Access-Token")] string forwardAccessToken = null);
+            [Header("X-Forward-Access-Token")] string forwardAccessToken = null,
+            string query = null);
 
 
         /// <summary>
@@ -82,6 +84,7 @@ namespace Altinn.ApiClients.Dan.Interfaces
         /// <param name="tokenOnBehalfOfOwner">If set, will attempt to get supplier access token onbehalf of the authenticated party</param>
         /// <param name="reuseToken">If true, will re-use access token supplied to DAN against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c></param>
         /// <param name="forwardAccessToken">If set, will use the supplied value as the access token against the dataset source. Overrides <c>tokenOnBehalfOfOwner</c> and <c>reuseToken</c></param>
+        /// <param name="query">Optional JMESPath query to filter/transform the dataset</param>
         /// <returns>The dataset requested as a JSON string</returns>
         [Get("/evidence/{accreditationId}/{evidenceCode}?envelope=false")]
         Task<string> GetEvidenceUnenveloped(
@@ -89,7 +92,8 @@ namespace Altinn.ApiClients.Dan.Interfaces
             string evidenceCode,
             bool tokenOnBehalfOfOwner = false,
             bool reuseToken = false,
-            [Header("X-Forward-Access-Token")] string forwardAccessToken = null);
+            [Header("X-Forward-Access-Token")] string forwardAccessToken = null,
+            string query = null);
 
         /// <summary>
         /// Gets the status of all datasets requested in accreditation

@@ -35,7 +35,11 @@ namespace SampleWebApp.Controllers
             UnitBasicInformation ubi =
                 await _danClient.GetDataSet<UnitBasicInformation>(datasetname, subject, null, parameters);
 
-            Console.WriteLine($"Retrieved information about {ubi.OrganizationName}");
+            // Example using JMESPath query to transform a dataset to a custom model
+            CustomUnitBasicInformation cubi =
+                await _danClient.GetDataSet<CustomUnitBasicInformation>(datasetname, subject, null, parameters, query: "{Orgnr: OrganizationNumber, Navn: OrganizationName}");
+
+            Console.WriteLine($"Retrieved information about {ubi.OrganizationName} ({cubi.Orgnr})");
 
             return Content(dataset.ToHtmlTable(), "text/html; charset=utf-8");
         }
@@ -152,9 +156,15 @@ namespace SampleWebApp.Controllers
 
     }
 
+    public class CustomUnitBasicInformation
+    {
+        public int Orgnr { get; set; }
+        public string Navn { get; set; }
+    }
+
     public class UnitBasicInformation
     {
-        public string OrganizationNumber { get; set; }
+        public long OrganizationNumber { get; set; }
 
         public string OrganizationName { get; set; }
 
@@ -194,7 +204,7 @@ namespace SampleWebApp.Controllers
 
         public string LatestFinacialStatement { get; set; }
 
-        public string NumberOfEmployees { get; set; }
+        public int NumberOfEmployees { get; set; }
 
         public bool IsBeingDissolved { get; set; }
 

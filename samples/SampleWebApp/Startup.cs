@@ -11,6 +11,8 @@ namespace SampleWebApp
 {
     public class Startup
     {
+        private const string MyClientDefinitionForDan = "my-client-definition-for-dan";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -20,12 +22,12 @@ namespace SampleWebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.RegisterMaskinportenClientDefinition<SettingsJwkClientDefinition>("my-client-definition-for-dan", 
+            services.RegisterMaskinportenClientDefinition<SettingsJwkClientDefinition>(MyClientDefinitionForDan,
                 Configuration.GetSection("MaskinportenSettingsForDanClient"));
 
             services
                 .AddDanClient(Configuration.GetSection("DanSettings"))
-                .AddMaskinportenHttpMessageHandler<SettingsJwkClientDefinition>("my-client-definition-for-dan");
+                .AddMaskinportenHttpMessageHandler<SettingsJwkClientDefinition>(MyClientDefinitionForDan);
 
             services.AddControllers();
         }
