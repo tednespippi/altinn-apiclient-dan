@@ -48,7 +48,7 @@ jobs:
       run: dotnet pack --configuration Release /p:Version=${VERSION} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --output . ${SOLUTION}
 
     - name: Upload NuGet packages as artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: nuget-packages
         path: ./*.*nupkg      
@@ -61,9 +61,6 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: nuget-packages
-  
-    - name: Checkout
-      uses: actions/checkout@v3
   
     - name: Push to GitHub Packages
       run: dotnet nuget push *.${{ needs.build.outputs.version }}.nupkg --source https://nuget.pkg.github.com/${GITHUB_REPOSITORY%/*}/index.json --api-key ${GITHUB_TOKEN}
@@ -78,9 +75,6 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: nuget-packages
-  
-    - name: Checkout
-      uses: actions/checkout@v3
   
     - name: Push to nuget.org
       env:
